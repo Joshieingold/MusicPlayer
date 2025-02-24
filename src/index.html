@@ -1,34 +1,90 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>Music :]</title>
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  </head>
-  <body>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
     <div class="Display">
-      <div class="SongName">
-        <p class="SongText">Twin Size Mattress - The Front Bottoms</p>
-      </div>
-      <div class="Art">
-        <img/>
-      </div>
-      <div class="ProgressBar"></div>
+        <div class="SongName">
+            <p class="SongText" id="songTitle">Twin Size Mattress - The Front Bottoms</p>
+        </div>
+        <div class="Art">
+            <img id="img" class="ArtImage" src="MusicArt/0.gif"/>
+        </div>
+        <div class="ProgressBar">
+            <input type="range" id="progress" value="0" max="100">
+        </div>
     </div>
-    <p class="PreciseTiming">2:01 / 2:45</p>
+    <p class="PreciseTiming" id="timeDisplay">0:00 / 2:45</p>
     <div class="ButtonContainer">
-      <button class="SmallBtn">
-        <img class="Icon" src="icons/left.png"/>
-      </button>
-      <button class="PlayBtn">
-        <img class="Icon" src="icons/play.png">
-      </button>
-      <button class="SmallBtn left">
-        <img class="Icon" src="icons/right.png"/>
-      </button>
+        <button class="SmallBtn" id="prevSong">
+            <img class="Icon" src="icons/left.png"/>
+        </button>
+        <button class="PlayBtn" id="playPauseBtn">
+            <img class="Icon" id="playPauseIcon" src="icons/play.png">
+        </button>
+        <button class="SmallBtn left" id="nextSong">
+            <img class="Icon" src="icons/right.png"/>
+        </button>
     </div>
-  </body>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" src="Music/twin_size_mattress.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById("audioPlayer");
+        const playPauseBtn = document.getElementById("playPauseBtn");
+        const playPauseIcon = document.getElementById("playPauseIcon");
+        const progressBar = document.getElementById("progress");
+        const timeDisplay = document.getElementById("timeDisplay");
+
+        // Play/Pause Button
+        playPauseBtn.addEventListener("click", () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseIcon.src = "icons/pause.png"; // Change icon to pause
+            } else {
+                audio.pause();
+                playPauseIcon.src = "icons/play.png"; // Change icon to play
+            }
+        });
+
+        // Update Progress Bar
+        audio.addEventListener("timeupdate", () => {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progress;
+
+            // Update time display
+            const currentTime = formatTime(audio.currentTime);
+            const duration = formatTime(audio.duration);
+            timeDisplay.textContent = `${currentTime} / ${duration}`;
+        });
+
+        // Seek Functionality
+        progressBar.addEventListener("input", () => {
+            audio.currentTime = (progressBar.value / 100) * audio.duration;
+        });
+
+        // Format Time
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+        }
+
+        // Change Song (Placeholder)
+        document.getElementById("nextSong").addEventListener("click", () => {
+            audio.src = "Music/Another_Song.mp3"; // Change to the next song
+            audio.play();
+            playPauseIcon.src = "icons/pause.png";
+            window.api.ChangeSong();
+        });
+
+    </script>
+</body>
 </html>
